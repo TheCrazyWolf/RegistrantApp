@@ -3,3 +3,14 @@ obj/
 .idea/
 *.db-shm
 *.db-wal
+/.vs/RegistrantApp
+/.vs/RegistrantApp/FileContentIndex
+/.vs/RegistrantApp/FileContentIndex/f9a12321-d473-4911-befd-2ae558f4c8a1.vsidx
+/.vs/RegistrantApp/FileContentIndex/read.lock
+/.vs/RegistrantApp/v17
+/.vs/RegistrantApp/v17/.wsuo
+/RegistrantApp
+/RegistrantApp/Client
+/RegistrantApp/Client/RegistrantApp.Client.csproj.user
+/RegistrantApp/Server
+/RegistrantApp/Server/RegistrantApp.Server.csproj.user
