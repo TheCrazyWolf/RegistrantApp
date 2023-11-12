@@ -7,21 +7,41 @@
     <title>RegistrantApp</title>
     <base href="/"/>
     <link href="css/appSpinner.css" rel="stylesheet"/>
-    <link href="css/appTailwind.css" rel="stylesheet"/>
+    <link href="css/tailwind/components.css" rel="stylesheet"/>
+    <link href="css/app.css" rel="stylesheet"/>
+    <script src="css/tailwind/components.js"></script>
 </head>
 
 <body>
 <div id="app">
+    <div id="blazor-error-ui">
+        <div class="rounded-md bg-yellow-50 p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <!-- Heroicon name: mini/exclamation-triangle -->
+                    <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                         fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd"
+                              d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
+                              clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-yellow-800">Необработанное исключение</h3>
+                    <div class="mt-2 text-sm text-yellow-700">
+                        <p>В процессе выполнения программы произошла ошибка. Подробности в консоли.</p>
+                        <a href="" class="reload">Reload</a>
+                        <a class="dismiss">🗙</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container-loader">
         <span class="loader"></span>
     </div>
 </div>
-
-<!--<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>-->
 <script src="_framework/blazor.webassembly.js"></script>
 </body>
 
