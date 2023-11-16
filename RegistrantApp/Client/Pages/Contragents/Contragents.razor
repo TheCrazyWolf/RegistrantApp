@@ -4,64 +4,57 @@
 @using RegistrantApp.Shared.Dto.Security
 @inject RApi Api;
 
-<h1>Контрагенты</h1>
+<PageTitle>Контрагенты</PageTitle>
 
-<div class="mb-3 row">
-    <input class="form-control" type="text"
-           placeholder="Поиск контрагентов" aria-label="Поиск">
+<h3 class="text-lg font-medium leading-6 text-gray-900">Контрагенты</h3>
 
-    <select class="form-select" aria-label="Кол-во записей">
-        <option value="15" selected>15</option>
-        <option value="30">30</option>
-        <option value="50">50</option>
-    </select>
-
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="showDeleted">
-        <label class="form-check-label" for="showDeleted">
-            Показать удаленные
-        </label>
+<div class="mt-4 bg-gray-50 sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+        <div class="mt-2 max-w-xl text-sm text-gray-500 flex-row flex items-center">
+            <div>
+                <input type="text" name="search" id="search" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="ООО Ромашка">
+            </div>
+            <div class="ml-4 flex justify-center">
+                <div class="flex h-5 flex justify-center items-center">
+                    <input id="showDeleted" aria-describedby="comments-description" name="comments"
+                           type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                </div>
+                <div class="ml-3 text-sm flex justify-center">
+                    <label for="showDeleted" class="font-medium text-gray-700">Удаленные</label>
+                </div>
+            </div>
+            <div class="ml-4">
+                <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 ">Поиск</button>
+            </div>
+            <div class="ml-2">
+                <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 ">Создать</button>
+            </div>
+        </div>
     </div>
-
-    <button @onclick="Request" type="button" class="btn btn-primary">Поиск</button>
-
 </div>
+
 <div>
-    <table class="table table-hover">
-        <thead>
-        <tr>
-            <th scope="col">Выбор</th>
-            <th scope="col">#</th>
-            <th scope="col">Контрагент</th>
-            <th scope="col">Действие</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                <input type="checkbox"/>
-            </td>
-            <td>1</td>
-            <td>ГАПОУ СГК</td>
-            <td>
-                <button type="button" class="btn btn-outline-warning">Редактировать</button>
-                <button type="button" class="btn btn-outline-danger">Удалить</button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    //TAble
 </div>
 
-<nav aria-label="...">
-    <ul class="pagination">
-        <li class="page-item disabled">
-            <span class="page-link">Предыдущая</span>
-        </li>
-        <li class="page-item">
-            <a class="page-link" href="#">Следующая</a>
-        </li>
-    </ul>
+<nav class="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6" aria-label="Pagination">
+    <div class="hidden sm:block">
+        <p class="text-sm text-gray-700">
+            Showing
+            <span class="font-medium">1</span>
+            to
+            <span class="font-medium">10</span>
+            of
+            <span class="font-medium">20</span>
+            results
+        </p>
+    </div>
+    <div class="flex flex-1 justify-between sm:justify-end">
+        <a href="#" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
+        <a href="#" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
+    </div>
 </nav>
+
 
 @code {
 
