@@ -6,15 +6,10 @@
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager Navigation;
 
-
-@if (_currentUser is not null)
-{
-    <a class="text-base font-medium text-white hover:text-indigo-50" href="security/logout">Выход</a>
-}
-<a class="text-base font-medium text-white hover:text-indigo-50" href="contragents">Контрагенты</a>
-<a class="text-base font-medium text-white hover:text-indigo-50" href="accounts">Водители</a>
-<a class="text-base font-medium text-white hover:text-indigo-50" href="orders">Заказы</a>
-<a class="text-base font-medium text-white hover:text-indigo-50" href="security/audit">Журнал аудита</a>
+<a href="contragents" class="text-indigo-100 text-sm font-medium rounded-md bg-white bg-opacity-0 px-3 py-2 hover:bg-opacity-10">Контрагенты</a>
+<a href="accounts" class="text-indigo-100 text-sm font-medium rounded-md bg-white bg-opacity-0 px-3 py-2 hover:bg-opacity-10">Водители</a>
+<a href="orders" class="text-indigo-100 text-sm font-medium rounded-md bg-white bg-opacity-0 px-3 py-2 hover:bg-opacity-10">Заказы</a>
+<a href="security/audit" class="text-indigo-100 text-sm font-medium rounded-md bg-white bg-opacity-0 px-3 py-2 hover:bg-opacity-10">Журнал аудита</a>
 
 
 @code {
