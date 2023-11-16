@@ -2,6 +2,7 @@
 @using RegistrantApp.Shared.PresentationLayer.Contragents
 @using RegistrantApp.ClientApi
 @using RegistrantApp.Shared.Dto.Security
+@using RegistrantApp.Client.Pages.Contragents.Components
 @inject RApi Api;
 
 <PageTitle>Контрагенты</PageTitle>
@@ -33,11 +34,17 @@
     </div>
 </div>
 
-<div>
-    //TAble
+<div class="mt-4">
+    <TableContragents @ref="tableContragentsComponent" ListContragents="Result.Contragents"/>
 </div>
 
-<nav class="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6" aria-label="Pagination">
+<nav class="mt-4 flex items-center justify-between bg-white" aria-label="Pagination">
+    <select id="recordByPage" name="location"
+            class="mr-3 block rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+        <option selected="">25</option>
+        <option >50</option>
+        <option>100</option>
+    </select>
     <div class="hidden sm:block">
         <p class="text-sm text-gray-700">
             Showing
@@ -73,6 +80,9 @@
     [Parameter]
     [SupplyParameterFromQuery]
     public string? SearchQuery { get; set; }
+
+
+    private TableContragents tableContragentsComponent = new();
 
     public ViewContragentPagination Result { get; set; } = new();
 
