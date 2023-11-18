@@ -4,7 +4,9 @@
 @using RegistrantApp.Client.Pages._components;
 @using RegistrantApp.Client.Pages.Contragents.Components
 @using Newtonsoft.Json
+@using Blazored.LocalStorage
 @inject RApi Api;
+@inject ISyncLocalStorageService LocalStorage;
 
 <PageTitle>Контрагенты</PageTitle>
 
@@ -30,7 +32,7 @@
                 </div>
             </div>
             <div class="ml-4">
-                <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 ">Поиск</button>
+                <button @onclick="RequestAsync" type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 ">Поиск</button>
             </div>
             <div class="ml-2">
                 <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 ">Создать</button>
@@ -106,8 +108,12 @@
 
     private async void RequestAsync()
     {
-        var result = await Api.Contragents.GetAsync(token: "", index: Index,
-            recordsByPage: RecordByPage, showDeleted: ShowDeleted, SearchQuery!);
+        var result = await Api.Contragents.GetAsync(
+            token: LocalStorage.GetItem<string>("token"),
+            index: Index,
+            recordsByPage: RecordByPage,
+            showDeleted: ShowDeleted,
+            search: SearchQuery!);
 
         if (!result.IsSuccessStatusCode)
         {
