@@ -4,12 +4,13 @@
     align-content: center;
     align-items: center;
     height: 100vh;
+    background-color: #155e75;
 }
 
 .loader {
     width: 48px;
     height: 48px;
-    border: 3px solid #08467d;
+    border: 3px solid #ffffff;
     border-radius: 50%;
     display: inline-block;
     position: relative;

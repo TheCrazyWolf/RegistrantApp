@@ -1,28 +1,29 @@
 @page "/contragents"
 @using RegistrantApp.Shared.PresentationLayer.Contragents
 @using RegistrantApp.ClientApi
-@using RegistrantApp.Shared.Dto.Security
+@using RegistrantApp.Client.Pages._components;
 @using RegistrantApp.Client.Pages.Contragents.Components
+@using Newtonsoft.Json
 @inject RApi Api;
 
 <PageTitle>Контрагенты</PageTitle>
 
 <h3 class="text-lg font-medium leading-6 text-gray-900">Контрагенты</h3>
-
+<AlertWarning @ref="_alert"/>
 <div class="mt-4 bg-gray-50 sm:rounded-lg">
     <div class="px-4 py-5 sm:p-6">
         <div class="mt-2 max-w-xl text-sm text-gray-500 flex-row flex items-center">
             <div>
-                <input type="text" 
+                <input type="text"
                        @bind="SearchQuery"
                        name="search" id="search" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="ООО Ромашка">
             </div>
             <div class="ml-4 flex justify-center">
                 <div class="flex h-5 flex justify-center items-center">
-                    <input 
+                    <input
                         @bind="ShowDeleted"
                         id="showDeleted" aria-describedby="comments-description" name="comments"
-                           type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                        type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
                 </div>
                 <div class="ml-3 text-sm flex justify-center">
                     <label for="showDeleted" class="font-medium text-gray-700">Удаленные</label>
@@ -39,41 +40,37 @@
 </div>
 
 <div class="mt-4">
-    <TableContragents @ref="tableContragentsComponent" 
-                      ListContragents="Result.Contragents"/>
+    <TableContragents @ref="_tableContragentsComponent"
+                      ListContragents="_result.Contragents"/>
 </div>
 
 <nav class="mt-4 flex items-center justify-between bg-white" aria-label="Pagination">
     <select @bind="RecordByPage"
-        id="recordByPage" name="location"
+            id="recordByPage" name="location"
             class="mr-3 block rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-        @foreach (var item in optionsRecordsbyPage)
+        @foreach (var item in new List<int>() { 25, 50, 100 })
         {
             <option value="@item">@item</option>
         }
     </select>
-    @if (Result is not null)
-    {
-        <div class="hidden sm:block">
-            <p class="text-sm text-gray-700">
-                Показана
-                <span class="font-medium">@Result.PageIndex</span>
-                из
-                <span class="font-medium">@Result.TotalPages</span>
-                страниц. Всего
-                <span class="font-medium">@Result.TotalRecords</span>
-                записей
-            </p>
-        </div>
-    }
+    <div class="hidden sm:block">
+        <p class="text-sm text-gray-700">
+            Показана
+            <span class="font-medium">@_result.PageIndex</span>
+            из
+            <span class="font-medium">@_result.TotalPages</span>
+            страниц. Всего
+            <span class="font-medium">@_result.TotalRecords</span>
+            записей
+        </p>
+    </div>
     <div class="flex flex-1 justify-between sm:justify-end">
-        <a href="#" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white 
+        <a @onclick="() => MovePage(Index - 1)" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white 
             px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Предыдущая</a>
-        <a href="#" class="relative ml-3 inline-flex items-center rounded-md border 
+        <a @onclick="() => MovePage(Index + 1)" class="relative ml-3 inline-flex items-center rounded-md border 
             border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Следующая</a>
     </div>
 </nav>
-
 
 @code {
 
@@ -83,7 +80,7 @@
 
     [Parameter]
     //[SupplyParameterFromQuery]
-    public int? RecordByPage { get; set; } = 25;
+    public int RecordByPage { get; set; } = 25;
 
     [Parameter]
     [SupplyParameterFromQuery]
@@ -94,26 +91,41 @@
     public string? SearchQuery { get; set; } = "";
 
 
-    private ICollection<int> optionsRecordsbyPage = new List<int>() { 25, 50, 100 };
-    private TableContragents tableContragentsComponent = new();
+    /* Компоненты */
+    private TableContragents _tableContragentsComponent = new();
 
-    public ViewContragentPagination? Result { get; set; } = new();
+    private ViewContragentPagination _result = new();
 
-    protected override void OnInitialized()
+    private AlertWarning _alert = new();
+
+    protected override Task OnInitializedAsync()
     {
+        RequestAsync();
+        return Task.CompletedTask;
     }
 
-    public async void Request()
+    private async void RequestAsync()
     {
-        var credentials = new dtoCredentials()
-        {
-            Login = "7999323",
-            Password = "adfads",
-            IpAdress = "",
-            FingerPrint = "sd"
-        };
+        var result = await Api.Contragents.GetAsync(token: "", index: Index,
+            recordsByPage: RecordByPage, showDeleted: ShowDeleted, SearchQuery!);
 
-        var json = await Api.Security.CreateSessionAsync(credentials);
+        if (!result.IsSuccessStatusCode)
+        {
+            _alert.MessageContent = result.Content!;
+            return;
+        }
+
+        _result = JsonConvert.DeserializeObject<ViewContragentPagination>(result.Content!)!;
+        StateHasChanged();
+    }
+
+    private void MovePage(int newIndex)
+    {
+        if (newIndex < 0 || newIndex > _result.TotalPages)
+            return;
+
+        Index = newIndex;
+        RequestAsync();
     }
 
 }
