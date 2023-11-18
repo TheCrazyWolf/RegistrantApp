@@ -6,6 +6,11 @@ namespace RegistrantApp.Client.Shared.Modals;
 public class ModalTailwindExtensions : ComponentBase
 {
     protected ModalState _stateModal = ModalState.Closed;
+
+    protected CancellationToken _cancellationToken;
+
+    protected string _optionTitleWindows = "Модальное окно";
+    
     protected string _optionBlurBackground = _constBackDrop;
     protected string _optionBackgroundLayerState = _constBackgroundStateClose;
     protected string _optionModalLayerState = _constModalStateClose;
@@ -43,7 +48,7 @@ public class ModalTailwindExtensions : ComponentBase
                 _optionModalLayerState = _constModalStateOpen;
                 break;
         }
-        
+
         await InvokeAsync(StateHasChanged);
         
         if(newState == ModalState.Closed)
