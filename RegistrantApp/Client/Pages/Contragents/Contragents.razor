@@ -10,6 +10,8 @@
 
 <PageTitle>Контрагенты</PageTitle>
 
+<ContragentAdd @ref="_add"/>
+
 <h3 class="text-lg font-medium leading-6 text-gray-900">Контрагенты</h3>
 <AlertWarning @ref="_alert"/>
 <div class="mt-4 bg-gray-50 sm:rounded-lg">
@@ -35,7 +37,7 @@
                 <button @onclick="RequestAsync" type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 ">Поиск</button>
             </div>
             <div class="ml-2">
-                <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 ">Создать</button>
+                <button @onclick="_add.OpenModal" type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 ">Создать</button>
             </div>
         </div>
     </div>
@@ -99,6 +101,7 @@
     private ViewContragentPagination _result = new();
 
     private AlertWarning _alert = new();
+    private ContragentAdd _add = new();
 
     protected override Task OnInitializedAsync()
     {
