@@ -12,10 +12,12 @@
 
 <PageTitle>Выход из системы</PageTitle>
 
-<form class="mb-3 mt-md-4">
-    <h2 class="fw-bold mb-2 text-uppercase ">Выход из системы</h2>
-    <p class="mb-4">Ваша сессия завершается, вы будете перенаправлены на страницу авторизации автоматически</p>
-</form>
+<div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+    <div class="text-center sm:text-left">
+        <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title">Ваш сеанс будет завершен</h3>
+        <p class="mt-4 block text-xs font-medium text-gray-900">Вы будете автоматически перенаправлены на страницу авторизации</p>
+    </div>
+</div>
 
 @code {
 
@@ -27,17 +29,16 @@
 
     private async Task LogoutTask()
     {
-        
         var token = await LocalStorage.GetItemAsync<string>("token");
-        if(string.IsNullOrEmpty(token))
+        if (string.IsNullOrEmpty(token))
             Navigation.NavigateTo("/security/login", true);
-        
+
         var dto = new dtoAccessTokenFinished()
         {
             DateTimeSessionFinished = DateTime.Now,
             Token = token
         };
-        
+
         await Api.Security.EndSessionAsync(dto);
 
         await LocalStorage.RemoveItemAsync("token");
@@ -45,4 +46,5 @@
         await LocalStorage.RemoveItemAsync("tokenExpired");
         Navigation.NavigateTo("/security/login", true);
     }
+
 }

@@ -1,103 +1,140 @@
 @page "/contragents"
 @using RegistrantApp.Shared.PresentationLayer.Contragents
 @using RegistrantApp.ClientApi
-@using RegistrantApp.Shared.Dto.Security
+@using RegistrantApp.Client.Pages._components;
+@using RegistrantApp.Client.Pages.Contragents.Components
+@using Newtonsoft.Json
+@using Blazored.LocalStorage
 @inject RApi Api;
+@inject ISyncLocalStorageService LocalStorage;
 
-<h1>Контрагенты</h1>
+<PageTitle>Контрагенты</PageTitle>
 
-<div class="mb-3 row">
-    <input class="form-control" type="text"
-           placeholder="Поиск контрагентов" aria-label="Поиск">
+<ContragentAdd @ref="_add"/>
 
-    <select class="form-select" aria-label="Кол-во записей">
-        <option value="15" selected>15</option>
-        <option value="30">30</option>
-        <option value="50">50</option>
-    </select>
-
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="showDeleted">
-        <label class="form-check-label" for="showDeleted">
-            Показать удаленные
-        </label>
+<h3 class="text-lg font-medium leading-6 text-gray-900">Контрагенты</h3>
+<AlertWarning @ref="_alert"/>
+<div class="mt-4 bg-gray-50 sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+        <div class="mt-2 max-w-xl text-sm text-gray-500 flex-row flex items-center">
+            <div>
+                <input type="text"
+                       @bind="SearchQuery"
+                       name="search" id="search" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="ООО Ромашка">
+            </div>
+            <div class="ml-4 flex justify-center">
+                <div class="flex h-5 flex justify-center items-center">
+                    <input
+                        @bind="ShowDeleted"
+                        id="showDeleted" aria-describedby="comments-description" name="comments"
+                        type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                </div>
+                <div class="ml-3 text-sm flex justify-center">
+                    <label for="showDeleted" class="font-medium text-gray-700">Удаленные</label>
+                </div>
+            </div>
+            <div class="ml-4">
+                <button @onclick="RequestAsync" type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 ">Поиск</button>
+            </div>
+            <div class="ml-2">
+                <button @onclick="_add.OpenModal" type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 ">Создать</button>
+            </div>
+        </div>
     </div>
-
-    <button @onclick="Request" type="button" class="btn btn-primary">Поиск</button>
-
-</div>
-<div>
-    <table class="table table-hover">
-        <thead>
-        <tr>
-            <th scope="col">Выбор</th>
-            <th scope="col">#</th>
-            <th scope="col">Контрагент</th>
-            <th scope="col">Действие</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                <input type="checkbox"/>
-            </td>
-            <td>1</td>
-            <td>ГАПОУ СГК</td>
-            <td>
-                <button type="button" class="btn btn-outline-warning">Редактировать</button>
-                <button type="button" class="btn btn-outline-danger">Удалить</button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
 </div>
 
-<nav aria-label="...">
-    <ul class="pagination">
-        <li class="page-item disabled">
-            <span class="page-link">Предыдущая</span>
-        </li>
-        <li class="page-item">
-            <a class="page-link" href="#">Следующая</a>
-        </li>
-    </ul>
+<div class="mt-4">
+    <TableContragents @ref="_tableContragentsComponent"
+                      ListContragents="_result.Contragents"/>
+</div>
+
+<nav class="mt-4 flex items-center justify-between bg-white" aria-label="Pagination">
+    <select @bind="RecordByPage"
+            id="recordByPage" name="location"
+            class="mr-3 block rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+        @foreach (var item in new List<int>() { 25, 50, 100 })
+        {
+            <option value="@item">@item</option>
+        }
+    </select>
+    <div class="hidden sm:block">
+        <p class="text-sm text-gray-700">
+            Показана
+            <span class="font-medium">@_result.PageIndex</span>
+            из
+            <span class="font-medium">@_result.TotalPages</span>
+            страниц. Всего
+            <span class="font-medium">@_result.TotalRecords</span>
+            записей
+        </p>
+    </div>
+    <div class="flex flex-1 justify-between sm:justify-end">
+        <a @onclick="() => MovePage(Index - 1)" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white 
+            px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Предыдущая</a>
+        <a @onclick="() => MovePage(Index + 1)" class="relative ml-3 inline-flex items-center rounded-md border 
+            border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Следующая</a>
+    </div>
 </nav>
 
 @code {
 
     [Parameter]
     [SupplyParameterFromQuery]
-    public int Index { get; set; }
+    public int Index { get; set; } = 0;
+
+    [Parameter]
+    //[SupplyParameterFromQuery]
+    public int RecordByPage { get; set; } = 25;
 
     [Parameter]
     [SupplyParameterFromQuery]
-    public int RecordByPage { get; set; }
+    public bool ShowDeleted { get; set; } = false;
 
     [Parameter]
     [SupplyParameterFromQuery]
-    public bool ShowDeleted { get; set; }
+    public string? SearchQuery { get; set; } = "";
 
-    [Parameter]
-    [SupplyParameterFromQuery]
-    public string? SearchQuery { get; set; }
 
-    public ViewContragentPagination Result { get; set; } = new();
+    /* Компоненты */
+    private TableContragents _tableContragentsComponent = new();
 
-    protected override void OnInitialized()
+    private ViewContragentPagination _result = new();
+
+    private AlertWarning _alert = new();
+    private ContragentAdd _add = new();
+
+    protected override Task OnInitializedAsync()
     {
+        RequestAsync();
+        return Task.CompletedTask;
     }
 
-    public async void Request()
+    private async void RequestAsync()
     {
-        var credentials = new dtoCredentials()
-        {
-            Login = "7999323",
-            Password = "adfads",
-            IpAdress = "",
-            FingerPrint = "sd"
-        };
+        var result = await Api.Contragents.GetAsync(
+            token: LocalStorage.GetItem<string>("token"),
+            index: Index,
+            recordsByPage: RecordByPage,
+            showDeleted: ShowDeleted,
+            search: SearchQuery!);
 
-        var json = await Api.Security.CreateSessionAsync(credentials);
+        if (!result.IsSuccessStatusCode)
+        {
+            _alert.MessageContent = result.Content!;
+            return;
+        }
+
+        _result = JsonConvert.DeserializeObject<ViewContragentPagination>(result.Content!)!;
+        StateHasChanged();
+    }
+
+    private void MovePage(int newIndex)
+    {
+        if (newIndex < 0 || newIndex > _result.TotalPages)
+            return;
+
+        Index = newIndex;
+        RequestAsync();
     }
 
 }

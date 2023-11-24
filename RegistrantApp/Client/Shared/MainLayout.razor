@@ -1,22 +1,97 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <NavMenu/>
+<div class="min-h-full">
+    <header class="bg-cyan-800 pb-24">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+            <div class="relative flex items-center justify-center py-5 lg:justify-between">
+                <!-- Logo -->
+                <div class="absolute left-0 flex-shrink-0 lg:static">
+                    <a href="#">
+                        <span class="sr-only">Your Company</span>
+                        <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=300" alt="Your Company">
+                    </a>
+                </div>
 
-    <main>
-        <div class="vh-100 d-flex justify-content-center align-items-center">
-            <div style="max-width: none; padding-right: 50px; padding-left: 50px;" class="container">
-                <div style="height: 95vh;" class="row d-flex justify-content-center">
-                    <div class="card bg-white shadow-lg">
-                        <div class="card-body p-5">
-                            @Body
+                <!-- Right section on desktop -->
+                <div class="hidden lg:ml-4 lg:flex lg:items-center lg:pr-0.5">
+                    <!-- Profile dropdown -->
+                    <div class="relative ml-4 flex-shrink-0">
+                        <div>
+                            <button @onclick="InteractiveMenu" type="button" class="flex rounded-full bg-white text-sm ring-2 ring-white ring-opacity-20 focus:outline-none focus:ring-opacity-100" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                <span class="sr-only">Open user menu</span>
+                                <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                            </button>
+                        </div>
+
+                        <!--
+                        Dropdown menu, show/hide based on menu state.
+
+                        Entering: ""
+                        From: ""
+                        To: ""
+                        Leaving: "transition ease-in duration-75"
+                        From: "transform opacity-100 scale-100"
+                        To: "transform opacity-0 scale-95"
+                        -->
+                        <div class="@_stateMenu transition ease-in duration-75 absolute -right-2 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                            <!-- Active: "bg-gray-100", Not Active: "" -->
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
+
+                            <!-- Active: "bg-gray-100", Not Active: "" -->
+                            <a href="security/logout" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="hidden border-t border-white border-opacity-20 py-5 lg:block">
+                <div class="grid grid-cols-3 items-center gap-8">
+                    <div class="col-span-2">
+                        <nav class="flex space-x-4">
+                            <!-- Current: "text-white", Default: "text-indigo-100" -->
+                            <NavMenu/>
+                        </nav>
+                    </div>
+                </div>
+            </div>
         </div>
-        @*<article class="content px-4">
-            @Body
-        </article>*@
+    
+    </header>
+    <main class="-mt-24 pb-8">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+            <!-- Main 3 column grid -->
+            <!-- Left column -->
+            <div class="grid grid-cols-1 gap-4 lg:col-span-2">
+                <section aria-labelledby="section-1-title">
+                    <div class="overflow-hidden rounded-lg bg-white shadow">
+                        <div class="p-6">
+                            @Body
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
     </main>
+    <footer>
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+            <div class="border-t border-gray-200 py-8 text-center text-sm text-gray-500 sm:text-left">
+                <span class="block sm:inline">&copy; 2021 Your Company, Inc.</span> <span class="block sm:inline">All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
 </div>
+
+@code {
+
+    private string _stateMenu = "transform opacity-0 scale-95";
+
+    private void InteractiveMenu()
+    {
+        if (_stateMenu is "transform opacity-0 scale-95")
+            _stateMenu = "";
+        else if(string.IsNullOrEmpty(_stateMenu))
+            _stateMenu = "transform opacity-0 scale-95";  
+        
+        StateHasChanged();
+    }
+
+}
